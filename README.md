@@ -4,6 +4,10 @@ An interactive, fully offline visualization of NASA C-MAPSS FD001 engine sensor 
 
 **[Launch the live dashboard](https://mehmetkaramaan.github.io/turbofan-sensor-forecasting-dashboard/)**
 
+[![Interactive turbofan animation showing the engine cross-section and six sensor channels](dashboard-preview.png)](https://mehmetkaramaan.github.io/turbofan-sensor-forecasting-dashboard/)
+
+*Click the preview to launch the interactive animation. Explore engine sensor dynamics, switch forecasting models, and inspect next-cycle T50 predictions.*
+
 The dashboard combines a schematic turbofan cross-section with recorded benchmark measurements. It connects time-series modeling, machine learning, and an engineering interpretation of engine sensor behavior.
 
 
