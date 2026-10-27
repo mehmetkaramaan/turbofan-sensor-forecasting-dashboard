@@ -26,6 +26,18 @@ The public demo runs directly in a browser through **GitHub Pages**; visitors do
 
 **How the animation relates to the results:** the tables below summarize the full held-out test set, while the live counters summarize only the selected engine and revealed forecast targets. Engine 7 has stored model predictions; the other 99 engines currently provide six-channel measurement playback. The browser does not fit models. Motor geometry and motion are schematic, while the displayed sensor values come from the FD001 benchmark.
 
+## Live multi-model comparison
+
+The dashboard offers three modes under **Compare forecasting models**:
+
+- **Active model:** a single-model metric table follows the model selected in the main controls.
+- **Selected models (up to 4):** choose models with checkboxes and overlay their forecasts on the temperature chart with a color legend. The default selection includes Persistence, Extra Trees, CatBoost, and SimpleRNN.
+- **All models:** compare all ten learned models and the baseline in an RMSE-ranked table with MAE, RMSE, shared-target count, relative RMSE reduction, and proportional error bars.
+
+All compared models are evaluated on the **same revealed target cycles of the selected engine**. The table updates with playback or timeline changes. Retrospective view does not reveal future targets to the metric calculation. At cycle 30 there are no scored targets yet; advance at least one cycle to populate the metrics. Relative RMSE reduction uses persistence on exactly those same targets. Negative values mean worse performance than persistence over that interval.
+
+The table is an engine-specific, evolving comparison, not the aggregate held-out-test leaderboard below. Model predictions are currently stored for engine 7. Other engines clearly indicate that forecasts are unavailable. **Export comparison** downloads the currently evaluated model metrics as CSV. The residual plot and headline forecast remain tied to the active forecasting model; only the temperature plot overlays the selected models.
+
 ## Interactive features
 
 - Explore **100 test engines** and six sensor channels: T50, T30, P30, Nf, Nc, and BPR.
