@@ -20,23 +20,21 @@ The public demo runs directly in a browser through **GitHub Pages**; visitors do
 1. Start with **Engine 7** to access ten learned models and the persistence baseline.
 2. Click **Play** to animate the schematic fan and airflow while recorded sensor values and charts advance through operating cycles.
 3. Use **Next cycle**, **Reset**, the timeline slider, and **Playback speed** to inspect individual states.
-4. Change **Forecasting model** to compare stored next-cycle T50 predictions. The star marks the next, unrevealed target.
-5. Follow the residual and cumulative MAE/RMSE as target measurements are revealed. Select another sensor to compare training-standardized trajectories.
+4. Choose one to four model checkboxes under **Models and evaluation**. Each gets its own forecast and residual panel. The star marks its next, unrevealed target.
+5. Follow each model’s residuals and MAE/RMSE as measurements are revealed. Switch the evaluation interval between all history and the last 10/30/60 cycles. Select another sensor to compare training-standardized trajectories.
 6. Use **Show full observed trajectory** for retrospective inspection or **Download CSV** to export the measurements revealed so far.
 
 **How the animation relates to the results:** the tables below summarize the full held-out test set, while the live counters summarize only the selected engine and revealed forecast targets. Engine 7 has stored model predictions; the other 99 engines currently provide six-channel measurement playback. The browser does not fit models. Motor geometry and motion are schematic, while the displayed sensor values come from the FD001 benchmark.
 
-## Live multi-model comparison
+## Unified model selection and individual panels
 
-The dashboard offers three modes under **Compare forecasting models**:
+Choose **one to four models** in the single **Models and evaluation** selection area. There is no separate active-model dropdown. Each checked model creates exactly one dedicated panel with its next-cycle T50 forecast, MAE, RMSE, observed-versus-forecast chart, and its own residual chart. Four selected models produce four panels; one produces one. Panels share forecast and residual scales for comparison.
 
-- **Active model:** a single-model metric table follows the model selected in the main controls.
-- **Selected models (up to 4):** choose models with checkboxes and overlay their forecasts on the temperature chart with a color legend. The default selection includes Persistence, Extra Trees, CatBoost, and SimpleRNN.
-- **All models:** compare all ten learned models and the baseline in an RMSE-ranked table with MAE, RMSE, shared-target count, relative RMSE reduction, and proportional error bars.
+The **Error evaluation interval** can use all revealed targets or the last **10, 30, or 60 operating cycles**. The evaluation interval changes error aggregation; it does not change the trained model's fixed 30-cycle input window. Every selected model uses the same revealed target cycles of the same engine. Future targets remain excluded even with full-trajectory view enabled.
 
-All compared models are evaluated on the **same revealed target cycles of the selected engine**. The table updates with playback or timeline changes. Retrospective view does not reveal future targets to the metric calculation. At cycle 30 there are no scored targets yet; advance at least one cycle to populate the metrics. Relative RMSE reduction uses persistence on exactly those same targets. Negative values mean worse performance than persistence over that interval.
+The summary table defaults to selected models. **All 11 models - table only** expands the ranking without changing the checked models or panel count. Relative RMSE reduction uses persistence over the same target interval; negative values mean worse performance than persistence in that interval. Engine-specific scores may differ from the full-test results below. Forecasts are stored for engine 7; other engines display sensor measurements only.
 
-The table is an engine-specific, evolving comparison, not the aggregate held-out-test leaderboard below. Model predictions are currently stored for engine 7. Other engines clearly indicate that forecasts are unavailable. **Export comparison** downloads the currently evaluated model metrics as CSV. The residual plot and headline forecast remain tied to the active forecasting model; only the temperature plot overlays the selected models.
+Use **Download CSV** to export revealed measurements with a forecast column for each selected model. **Export comparison** downloads the current metric table. The on-page guide explains the 17-input, next-cycle T50 task, MAE/RMSE, residual signs, cycle navigation, engine and sensor selection, playback speed, and what requires retraining. Sensor values and model hyperparameters are not modified by the dashboard.
 
 ## Interactive features
 
