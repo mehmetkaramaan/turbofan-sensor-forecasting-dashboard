@@ -1,0 +1,13 @@
+{
+  "source": "Saved Kaggle experiment notebook, local copy",
+  "source_sha256": "0b9fa7998a4b83e1a36b957d10f97f3f30106d82af1a1b83b9888161b6c5542a",
+  "dataset_revision": "4d14a0bf6248235bce31cbdacb297e03e0f75d52",
+  "seed": 42,
+  "window": 30,
+  "target": "T50",
+  "recorded_metrics": "Extracted from saved output table; not recomputed during publication",
+  "published_code": "English translation of saved experiment cells 0-37; comments and cached outputs removed; animation cell excluded; recorded model settings preserved",
+  "requirements": "Compatibility ranges, not the original environment lock",
+  "selected_model": "CatBoost",
+  "selection": "Minimum validation RMSE"
+}

@@ -1,4 +1,36 @@
-# Turbofan Sensor Forecasting Dashboard
+# Turbofan Sensor Forecasting — Python ML/DL Experiment
+
+A Python time-series experiment comparing ten machine learning and deep learning models for **next-cycle T50 sensor prediction** using NASA C-MAPSS FD001. The browser dashboard is a companion visualization of the recorded experiment.
+
+**Start with the model code:** [Python training and evaluation](train.py) · [English notebook](turbofan_sensor_forecasting.ipynb) · [Recorded result table](recorded_model_comparison.csv)
+
+## Reproduce the Python experiment
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python train.py
+```
+
+Alternatively, open `turbofan_sensor_forecasting.ipynb` in Jupyter or Kaggle and run the cells in order. The notebook and script use the same saved Kaggle model settings; the script uses Matplotlib's non-interactive backend for local execution. Training downloads the pinned FD001 Parquet files and writes figures, predictions, model comparisons, learning histories and an experiment manifest under `turbofan_outputs/`.
+
+### Experimental design
+
+- Forecast T50 at cycle t+1 from the previous 30 observed cycles; windows never cross engine boundaries.
+- Reserve 20 complete official training engines for validation; fit scalers and select variable input channels using only the remaining 80 engines.
+- Exclude engine ID, cycle index, RUL and dataset/split labels from model inputs.
+- Compare KNN, Decision Tree, Random Forest, Extra Trees, Gradient Boosting, XGBoost, CatBoost, LightGBM, MLP and SimpleRNN against persistence.
+- Select the candidate by validation RMSE. Use original °R units for held-out test MAE/RMSE; also report R², macro-engine MAE and measured computational cost.
+- MLP and SimpleRNN minimize standardized-target MSE with Adam, at most 35 epochs, batch size 128 and validation early stopping with patience 6.
+
+`recorded_model_comparison.csv` was extracted from the saved executed Kaggle output; publishing it did not rerun training. CatBoost had the lowest validation RMSE (4.1168 °R), while Extra Trees had a slightly lower test RMSE (4.1185 vs 4.1227 °R). Test ranking was not used to replace validation-based selection. No repeated-seed significance claim is made.
+
+The original notebook's training, split, architecture and hyperparameters are preserved in the English source. Cached notebook outputs were removed to avoid mixing old Turkish figures with rerun results. `experiment_provenance.json` records the source notebook hash and publication changes. Requirements are compatible version ranges, not the original environment lock; hardware/library changes can change timings and numerical results. The script produces evaluation artifacts; it does not currently export fitted model weights for deployment.
+
+### Source and visualization
+
+`train.py` and the notebook contain the actual model-fitting and evaluation workflow. `build.py` only assembles the dashboard. `index.html` is a generated artifact of `dashboard.template.html` plus `benchmark-data.json`; `.gitattributes` marks that generated file accordingly, while the handwritten dashboard template remains visible in language statistics. The GitHub Pages entry point stays at the repository root so the existing demo URL continues to work.
 
 An interactive, fully offline visualization of NASA C-MAPSS FD001 engine sensor trajectories and next-cycle temperature forecasts, developed by **Mehmet Karaman**.
 
@@ -161,6 +193,11 @@ python3 build.py
 
 | File | Purpose |
 | --- | --- |
+| `train.py` | Full Python model training, diagnostics and evaluation |
+| `turbofan_sensor_forecasting.ipynb` | English experiment notebook |
+| `recorded_model_comparison.csv` | Recorded Kaggle metrics, extracted without retraining |
+| `experiment_provenance.json` | Source hash, dataset revision and publication provenance |
+| `requirements.txt` | Python experiment dependencies |
 | `index.html` | Self-contained interactive dashboard, including data |
 | `dashboard.template.html` | Readable interface, SVG, styling, and JavaScript source |
 | `benchmark-data.json` | Bundled measurements, stored predictions, and training statistics |
