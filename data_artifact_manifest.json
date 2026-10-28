@@ -1,0 +1,27 @@
+{
+  "dataset_revision": "4d14a0bf6248235bce31cbdacb297e03e0f75d52",
+  "benchmark_data_sha256": "abfecc82fc1da631b1da11cab3c38f516afa6a86bdd5b838705bd3e7ffc6758a",
+  "forecast_csv_sha256": "b510adc43fc23f33b43ba53127f1ad9e4f1e4cd9c0f72be421dff5d2abee3c6a",
+  "source": "Forecast values already bundled from the saved Kaggle experiment; no models retrained for this publication.",
+  "forecast_engine": 7,
+  "forecast_target_cycles": [
+    31,
+    160
+  ],
+  "forecast_count_per_model": 130,
+  "models": [
+    "Persistence",
+    "KNN",
+    "Decision Tree",
+    "Random Forest",
+    "Extra Trees",
+    "Gradient Boosting",
+    "XGBoost",
+    "CatBoost",
+    "LightGBM",
+    "MLP",
+    "SimpleRNN"
+  ],
+  "browser_model_inference": false,
+  "trained_model_weights_in_repository": false
+}
