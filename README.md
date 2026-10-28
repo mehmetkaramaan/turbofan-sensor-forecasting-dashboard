@@ -20,7 +20,7 @@ The public demo runs directly in a browser through **GitHub Pages**; visitors do
 1. Start with **Engine 7** to access ten learned models and the persistence baseline.
 2. Click **Play** to animate the schematic fan and airflow while recorded sensor values and charts advance through operating cycles.
 3. Use **Next cycle**, **Reset**, the timeline slider, and **Playback speed** to inspect individual states.
-4. Choose one to four model checkboxes under **Models and evaluation**. Each gets its own forecast and residual panel. The star marks its next, unrevealed target.
+4. Choose one to four model checkboxes under **Model comparison**. Each gets its own forecast and residual panel. The star marks its next, unrevealed target.
 5. Follow each model’s residuals and MAE/RMSE as measurements are revealed. Switch the evaluation interval between all history and the last 10/30/60 cycles. Select another sensor to compare training-standardized trajectories.
 6. Use **Show full observed trajectory** for retrospective inspection or **Download CSV** to export the measurements revealed so far.
 
@@ -28,13 +28,17 @@ The public demo runs directly in a browser through **GitHub Pages**; visitors do
 
 ## Unified model selection and individual panels
 
-Choose **one to four models** in the single **Models and evaluation** selection area. There is no separate active-model dropdown. Each checked model creates exactly one dedicated panel with its next-cycle T50 forecast, MAE, RMSE, observed-versus-forecast chart, and its own residual chart. Four selected models produce four panels; one produces one. Panels share forecast and residual scales for comparison.
+Choose **one to four models** in the single **Model comparison** selection area. There is no separate active-model dropdown. Each checked model creates exactly one dedicated panel with its next-cycle T50 forecast, MAE, RMSE, observed-versus-forecast chart, and its own residual chart. Four selected models produce four panels; one produces one. Panels share forecast and residual scales for comparison.
 
 The **Error evaluation interval** can use all revealed targets or the last **10, 30, or 60 operating cycles**. The evaluation interval changes error aggregation; it does not change the trained model's fixed 30-cycle input window. Every selected model uses the same revealed target cycles of the same engine. Future targets remain excluded even with full-trajectory view enabled.
 
 The summary table defaults to selected models. **All 11 models - table only** expands the ranking without changing the checked models or panel count. Relative RMSE reduction uses persistence over the same target interval; negative values mean worse performance than persistence in that interval. Engine-specific scores may differ from the full-test results below. Forecasts are stored for engine 7; other engines display sensor measurements only.
 
 Use **Download CSV** to export revealed measurements with a forecast column for each selected model. **Export comparison** downloads the current metric table. The on-page guide explains the 17-input, next-cycle T50 task, MAE/RMSE, residual signs, cycle navigation, engine and sensor selection, playback speed, and what requires retraining. Sensor values and model hyperparameters are not modified by the dashboard.
+
+## Console layout
+
+A neutral charcoal interface separates playback controls from the engine overview and model comparison workspace. Thermal accents identify engine measurements; muted model colours distinguish forecast and residual panels. Method and scientific-scope notes expand on demand. The interface remains self-contained and works offline.
 
 ## Interactive features
 
