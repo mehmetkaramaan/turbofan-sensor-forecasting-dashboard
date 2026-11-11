@@ -268,6 +268,39 @@ record('SimpleRNN',p,pv,fit_s,pred_s); report('SimpleRNN')
 fig,ax=plt.subplots(figsize=(9,4)); ax.plot(history.history['loss'],label='Train'); ax.plot(history.history['val_loss'],label='Validation')
 ax.set(title='SimpleRNN'+' learning curve',xlabel='Epoch (zero-based)',ylabel='MSE (standardized target)'); ax.legend(); finish('learning_'+'SimpleRNN')
 
+for name, recurrent in [('LSTM', tf.keras.layers.LSTM), ('GRU', tf.keras.layers.GRU)]:
+    tf.keras.utils.set_random_seed(SEED)
+    net = tf.keras.Sequential([
+        tf.keras.layers.Input(shape=(WINDOW, len(features))),
+        recurrent(32, activation='tanh'),
+        tf.keras.layers.Dense(16, activation='relu'),
+        tf.keras.layers.Dense(1),
+    ])
+    net.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='mse')
+    start = time.perf_counter()
+    history = net.fit(
+        Xtr, ytr_z, validation_data=(Xva, yva_z), epochs=35, batch_size=128,
+        shuffle=True, verbose=0, callbacks=[tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss', patience=6, restore_best_weights=True)],
+    )
+    fit_s = time.perf_counter() - start
+    pv = yscale.inverse_transform(net.predict(Xva, verbose=0)).ravel()
+    start = time.perf_counter()
+    p = yscale.inverse_transform(net.predict(Xte, verbose=0)).ravel()
+    pred_s = time.perf_counter() - start
+    rows[:] = [row for row in rows if row['Model'] != name]
+    models[name] = net
+    histories[name] = history.history
+    record(name, p, pv, fit_s, pred_s)
+    report(name)
+    fig, ax = plt.subplots(figsize=(9, 4))
+    for key, label in [('loss', 'Train'), ('val_loss', 'Validation')]:
+        ax.plot(range(1, len(history.history[key]) + 1), history.history[key], label=label)
+    ax.set(title=f'{name} learning curve', xlabel='Epoch', ylabel='MSE (standardized target)')
+    ax.legend()
+    finish(f'learning_{name}')
+
+
 leaderboard=pd.DataFrame(rows).set_index('Model')
 selected=leaderboard['Validation RMSE'].idxmin()
 display(Markdown(f'**Candidate selected on validation engines: {selected}.**'))

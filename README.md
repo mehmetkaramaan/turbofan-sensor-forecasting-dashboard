@@ -1,6 +1,6 @@
 # Turbofan Sensor Forecasting, Python ML/DL Experiment
 
-This project predicts the next observed T50 sensor value from 30 preceding engine cycles using NASA C-MAPSS FD001. It compares ten learned models with a persistence baseline. The Python experiment is the main work; the browser dashboard replays its stored results.
+This project predicts the next observed T50 sensor value from 30 preceding engine cycles using NASA C-MAPSS FD001. It compares twelve learned models with a persistence baseline. The Python experiment is the main work; the browser dashboard replays its stored results.
 
 [Training and evaluation code](train.py), [English notebook](turbofan_sensor_forecasting.ipynb), [recorded model comparison](recorded_model_comparison.csv), [engine 7 forecast values](recorded_engine7_forecasts.csv).
 
@@ -10,7 +10,7 @@ This project predicts the next observed T50 sensor value from 30 preceding engin
 
 ## What the repository contains
 
-`train.py` downloads the pinned dataset, prepares engine-level partitions, constructs windows, fits the ten models and evaluates their predictions. The notebook contains the same experiment with explanations and diagnostics. Models are fitted in Python using scikit-learn, XGBoost, CatBoost, LightGBM and TensorFlow/Keras.
+`train.py` downloads the pinned dataset, prepares engine-level partitions, constructs windows, fits the twelve learned models and evaluates their predictions. The notebook contains the same experiment with explanations and diagnostics. Models are fitted in Python using scikit-learn, XGBoost, CatBoost, LightGBM and TensorFlow/Keras.
 
 `benchmark-data.json` contains recorded FD001 sensor values and stored forecasts for engine 7. `build.py` combines that data with `dashboard.template.html` to produce the self-contained `index.html`. JavaScript handles playback, plotting, CSV export and error calculation; it does not train or execute the learned models. The bundled forecasts are saved experiment outputs, not random noise or newly generated browser predictions.
 
@@ -26,29 +26,31 @@ The target is low-pressure-turbine outlet temperature T50 at cycle t+1 in degree
 
 Twenty whole training engines are reserved for validation using seed 42; the remaining 80 engines fit channel selection, scaling and model parameters. The official 100 test engines stay separate. This produces 13,990 training windows, 3,641 validation windows and 10,096 test windows. Preprocessing statistics are fitted on training engines only.
 
-KNN, Decision Tree, Random Forest, Extra Trees, Gradient Boosting, XGBoost, CatBoost and LightGBM use flattened histories. MLP also flattens its input; SimpleRNN reads the ordered sequence. All models receive the same history. Persistence predicts the next temperature as the latest observed temperature.
+KNN, Decision Tree, Random Forest, Extra Trees, Gradient Boosting, XGBoost, CatBoost and LightGBM use flattened histories. MLP also flattens its input; SimpleRNN, LSTM and GRU read the ordered sequence. All models receive the same history. Persistence predicts the next temperature as the latest observed temperature.
 
-MLP uses Flatten, Dense(64), Dense(32) and Dense(1). SimpleRNN uses SimpleRNN(32), Dense(16) and Dense(1). Both minimize standardized-target MSE with Adam, at most 35 epochs, batch size 128 and validation early stopping with patience 6. All other model settings are explicit in `train.py`.
+MLP uses Flatten, Dense(64), Dense(32) and Dense(1). SimpleRNN uses SimpleRNN(32), Dense(16) and Dense(1). LSTM and GRU replace the SimpleRNN layer with a 32-unit gated layer and retain the same dense head. All four neural models minimize standardized-target MSE with Adam, at most 35 epochs, batch size 128 and validation early stopping with patience 6. All other model settings are explicit in `train.py`.
 
 ## Recorded results
 
 These values were extracted from the saved executed Kaggle notebook. They were not recomputed during repository cleanup. MAE and RMSE retain °R units; R² measures explained variation and is not classification accuracy. The table is sorted by test RMSE for reporting, while model selection uses validation RMSE.
 
-| Model | Test MAE (°R) | Test RMSE (°R) | R² | Validation RMSE (°R) |
-| --- | ---: | ---: | ---: | ---: |
-| Extra Trees | 3.2941 | 4.1185 | 0.6314 | 4.1305 |
-| Random Forest | 3.2959 | 4.1215 | 0.6309 | 4.1602 |
-| CatBoost | 3.2940 | 4.1227 | 0.6307 | 4.1168 |
-| XGBoost | 3.3020 | 4.1300 | 0.6294 | 4.1441 |
-| LightGBM | 3.2984 | 4.1312 | 0.6292 | 4.1493 |
-| Gradient Boosting | 3.3073 | 4.1369 | 0.6281 | 4.1463 |
-| MLP | 3.4002 | 4.2559 | 0.6064 | 4.3466 |
-| SimpleRNN | 3.4062 | 4.2623 | 0.6052 | 4.2572 |
-| KNN | 3.4133 | 4.2629 | 0.6051 | 4.2623 |
-| Decision Tree | 3.9378 | 4.9267 | 0.4726 | 5.0225 |
-| Persistence | 4.5458 | 5.6698 | 0.3015 | 5.7100 |
+| Model | Test MAE (°R) | Test RMSE (°R) | R² | Validation RMSE (°R) | Fit (s) |
+|---|---:|---:|---:|---:|---:|
+| **LSTM** | 3.2891 | 4.1105 | 0.6329 | 4.1435 | 14.8462 |
+| GRU | 3.2908 | 4.1178 | 0.6316 | 4.1325 | 15.3153 |
+| **Extra Trees** | 3.2941 | 4.1185 | 0.6314 | 4.1305 | 21.6800 |
+| Random Forest | 3.2959 | 4.1215 | 0.6309 | 4.1602 | 117.0891 |
+| **CatBoost** | 3.2940 | 4.1227 | 0.6307 | 4.1168 | 5.7023 |
+| XGBoost | 3.3020 | 4.1300 | 0.6294 | 4.1441 | 4.6124 |
+| LightGBM | 3.2984 | 4.1312 | 0.6292 | 4.1493 | 4.1611 |
+| Gradient Boosting | 3.3073 | 4.1369 | 0.6281 | 4.1463 | 166.6585 |
+| MLP | 3.4002 | 4.2559 | 0.6064 | 4.3466 | 6.7028 |
+| KNN | 3.4133 | 4.2629 | 0.6051 | 4.2623 | 0.0037 |
+| SimpleRNN | 3.4086 | 4.2645 | 0.6048 | 4.2584 | 14.5372 |
+| Decision Tree | 3.9378 | 4.9267 | 0.4726 | 5.0225 | 4.4675 |
+| Persistence | 4.5458 | 5.6698 | 0.3015 | 5.7100 | 0.0000 |
 
-CatBoost had the lowest validation RMSE, 4.1168 °R, and was selected before test interpretation. Its test RMSE was 4.1227 °R against persistence at 5.6698 °R, a 27.29% reduction. Extra Trees had the smallest reported test RMSE, 4.1185 °R, but that small difference does not establish a statistically reliable winner. One split and seed do not establish a universal model ranking.
+CatBoost had the lowest validation RMSE, 4.1168 °R, and was selected before test interpretation. Its test RMSE was 4.1227 °R against persistence at 5.6698 °R, a 27.29% reduction. LSTM had the lowest test RMSE (4.1105 °R), followed by GRU (4.1178 °R). Extra Trees led the classical models (4.1185 °R). CatBoost took 5.70 s to fit versus 14.85 s for LSTM, with a test RMSE gap of only 0.0122 °R. One split and seed do not establish a universal model ranking.
 
 Training time, prediction cost and equal-weight per-engine MAE remain available in `recorded_model_comparison.csv`. Those timings describe the saved environment and batching choices, not guaranteed deployment latency. Window observations overlap and are not independent samples.
 
